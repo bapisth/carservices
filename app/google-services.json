@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "784726317070",
+    "firebase_url": "https://carservice-5168d.firebaseio.com",
+    "project_id": "carservice-5168d",
+    "storage_bucket": "carservice-5168d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784726317070:android:f8996d3d8177270e",
+        "android_client_info": {
+          "package_name": "com.urja.carservices"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "784726317070-moadokm11vq9abg6epsoad4rgmcdc0o6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAa0jLI9bB_f3kbe-toUb_0FsDUW2lOA4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
