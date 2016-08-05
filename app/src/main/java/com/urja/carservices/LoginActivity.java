@@ -37,7 +37,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         if (auth.getCurrentUser() != null) {
             Log.e(TAG, "onCreate: User is Authenticated!!"+ auth.getCurrentUser() );
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            //startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
             finish();
         }
 

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.urja.carservices">
+    <uses-sdk android:minSdkVersion="21" android:maxSdkVersion="24"></uses-sdk>
+
 
     <application
         android:allowBackup="true"
@@ -36,13 +38,17 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".SplashScreenActivity"
-                  android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".SplashScreenActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".DashboardActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 

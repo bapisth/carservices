@@ -35,6 +35,10 @@ dependencies {
     compile 'com.firebaseui:firebase-ui-database:0.4.4'
     compile 'com.android.support:design:24.1.1'
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:v1.9.7'
+    compile('com.mikepenz:materialdrawer:5.3.6@aar') {
+        transitive = true
+    }
+    compile 'com.mikepenz:fontawesome-typeface:4.6.0.3@aar'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha4'
     testCompile 'junit:junit:4.12'
 }
