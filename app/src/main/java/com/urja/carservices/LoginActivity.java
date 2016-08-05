@@ -1,5 +1,6 @@
 package com.urja.carservices;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,6 +26,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth auth;
     private ProgressBar progressBar;
     private Button btnSignup, btnLogin, btnReset;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +50,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //UI Initialization
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        //progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setTitle(R.string.title_progress_dialog);
+        mProgressDialog.setMessage("Please wait ...");
+        mProgressDialog.setCancelable(false);
         btnSignup = (Button) findViewById(R.id.btn_signup);
         btnLogin = (Button) findViewById(R.id.btn_login);
         btnReset = (Button) findViewById(R.id.btn_reset_password);
@@ -81,7 +87,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     return;
                 }
 
-                progressBar.setVisibility(View.VISIBLE);
+                //progressBar.setVisibility(View.VISIBLE);
+                mProgressDialog.show();
 
                 //authenticate user
                 OnCompleteListener<AuthResult> onCompleteListener = getOnCompleteListener(password);
@@ -102,7 +109,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 // If sign in fails, display a message to the user. If sign in succeeds
                 // the auth state listener will be notified and logic to handle the
                 // signed in user can be handled in the listener.
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
+                mProgressDialog.dismiss();
                 if (!task.isSuccessful()) {
                     // there was an error
                     if (password.length() < 6) {

@@ -7,4 +7,6 @@
     <string name="new_pass">New Password</string>
     <string name="title_activity_profile">Gemini Car Service</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="title_progress_dialog">Authenticating</string>
+    <string name="message_progress_dialog">Please wait ...</string>
 </resources>
