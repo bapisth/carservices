@@ -15,13 +15,25 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.urja.carservices.models.Customer;
+import com.urja.carservices.models.CustomerAddress;
+import com.urja.carservices.utils.DatabaseConstants;
 
 public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private EditText inputEmail, inputPassword;
+    private EditText inputEmail, inputPassword, fullName, mobile;
     private Button btnSignIn, btnSignUp, btnResetPassword;
+    private Customer mCustomer;
+    private CustomerAddress mCustomerAddress;
+    private String mCurrentUserId = null;
     //private ProgressBar progressBar;
     private FirebaseAuth auth;
+    private DatabaseReference mdatabaseRootRef = FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference mCustomerRef = mdatabaseRootRef.child(DatabaseConstants.TABLE_CUSTOMER);// Add Name and Phone number to 'Customer' object
+    private DatabaseReference mCustomerAddressRef = mdatabaseRootRef.child(DatabaseConstants.TABLE_CUSTOMER_ADDRESS);
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,16 +44,19 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         auth = FirebaseAuth.getInstance();
 
         //UI Initialization
-        btnSignIn = (Button) findViewById(R.id.sign_in_button);
+        //btnSignIn = (Button) findViewById(R.id.sign_in_button);
         btnSignUp = (Button) findViewById(R.id.sign_up_button);
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
         //progressBar = (ProgressBar) findViewById(R.id.progressBar);
         btnResetPassword = (Button) findViewById(R.id.btn_reset_password);
+        fullName = (EditText) findViewById(R.id.fullName);
+        mobile = (EditText) findViewById(R.id.mobile);
+
 
         //Event Listeners
         btnResetPassword.setOnClickListener(this);
-        btnSignIn.setOnClickListener(this);
+        //btnSignIn.setOnClickListener(this);
         btnSignUp.setOnClickListener(this);
     }
 
@@ -90,15 +105,19 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                                     Toast.makeText(SignupActivity.this, R.string.info_signup_failed+":"+ task.getException(),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                                    //Update phone Number for that User
+                                    updateUserData();
+
+                                    //startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                                    startActivity(new Intent(SignupActivity.this, UserProfileActivity.class));
                                     finish();
                                 }
                             }
                         });
                 break;
-            case R.id.sign_in_button:
+            /*case R.id.sign_in_button:
                 finish();
-                break;
+                break;*/
 
             case R.id.btn_reset_password:
                 startActivity(new Intent(SignupActivity.this, ResetPasswordActivity.class));
@@ -106,5 +125,27 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
         }
 
+    }
+
+    private void updateUserData() {
+        String fullName = this.fullName.getText().toString();
+        String mobile = this.mobile.getText().toString();
+        if (mCurrentUserId == null)
+            mCurrentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        mCustomer = new Customer();
+        mCustomer.setName(fullName);
+        mCustomer.setMobile(mobile);
+
+        mCustomerAddress = new CustomerAddress();
+        mCustomerAddress.setCity("Bhubaneswar");
+        mCustomerAddress.setCountry("INDIA");
+        mCustomerAddress.setState("ODISHA");
+
+        /*mCustomerRef.child(mCurrentUserId).push().setValue(mCustomer);
+        mCustomerAddressRef.child(mCurrentUserId).setValue(mCustomerAddress);*/
+
+        mCustomerRef.child(mCurrentUserId).setValue(mCustomer);
+        mCustomerAddressRef.child(mCurrentUserId).setValue(mCustomerAddress);
     }
 }

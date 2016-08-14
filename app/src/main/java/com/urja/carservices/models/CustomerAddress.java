@@ -3,7 +3,7 @@ package com.urja.carservices.models;
 /**
  * Created by hemendra on 26-07-2016.
  */
-public class PersonAddress {
+public class CustomerAddress {
     private String city;
     private String state;
     private String country;

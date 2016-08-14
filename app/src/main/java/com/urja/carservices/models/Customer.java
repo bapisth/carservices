@@ -3,9 +3,9 @@ package com.urja.carservices.models;
 /**
  * Created by hemendra on 26-07-2016.
  */
-public class Person {
+public class Customer {
     private String name;
-    private PersonAddress personAddress;
+    private String mobile;
 
     public String getName() {
         return name;
@@ -15,11 +15,11 @@ public class Person {
         this.name = name;
     }
 
-    public PersonAddress getPersonAddress() {
-        return personAddress;
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setPersonAddress(PersonAddress personAddress) {
-        this.personAddress = personAddress;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 }

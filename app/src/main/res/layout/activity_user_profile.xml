@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".DashboardActivity">
+    tools:context=".UserProfileActivity">
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -14,17 +14,16 @@
         android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.design.widget.CollapsingToolbarLayout
+       <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
             <ImageView
-                android:layout_width="112dp"
-                android:layout_height="112dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:src="@mipmap/app_launcher"
                 android:id="@+id/movie_detail_poster"/>
@@ -33,42 +32,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
+                android:elevation="4dp"
+                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
                 />
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
-    <!--<android.support.design.widget.AppBarLayout
-        android:id="@+id/appBar"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
-        &lt;!&ndash; Toolbar is the actual app bar with text and the action items &ndash;&gt;
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|enterAlways" />
-            <ImageView
-                android:layout_width="112dp"
-                android:layout_height="112dp"
-                android:layout_gravity="center"
-                android:background="@drawable/app_logo"/>
+    <include layout="@layout/content_my_profile"
+             android:id="@+id/include"
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+        />
 
-        </android.support.design.widget.CollapsingToolbarLayout>
 
-    </android.support.design.widget.AppBarLayout>-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_save"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="@dimen/dp_10"
+        app:layout_anchorGravity="bottom|right"
+        app:srcCompat="@mipmap/ic_save_black_24dp"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
+        app:elevation="9dp"
+        app:layout_anchor="@+id/include"
+        android:layout_gravity="center_vertical|left"/>
 
-    <!--Content Goes Here....-->
-    <include layout="@layout/content_scrolling"/>
 
 
 </android.support.design.widget.CoordinatorLayout>
