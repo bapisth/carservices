@@ -9,4 +9,6 @@ public class DatabaseConstants {
     public static final String TABLE_CUSTOMER = "customer";
     public static final String TABLE_CUSTOMER_ADDRESS = "customerAddress";
     public static final String TABLE_BOOKING = "booking";
+    public static final String TABLE_VEHICLE = "ValidVehicle";
+    public static final String TABLE_VEHICLE_TYPE = "VehicleType";
 }

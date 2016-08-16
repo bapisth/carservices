@@ -1,7 +1,9 @@
 package com.urja.carservices;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.design.widget.AppBarLayout;
@@ -9,8 +11,12 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,8 +49,14 @@ import com.mikepenz.materialdrawer.model.ToggleDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.octicons_typeface_library.Octicons;
+import com.urja.carservices.adapters.VehicleTypeAdapter;
 import com.urja.carservices.models.Customer;
+import com.urja.carservices.models.Vehicle;
 import com.urja.carservices.utils.CurrentLoggedInUser;
+import com.urja.carservices.utils.DatabaseConstants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -56,11 +68,16 @@ public class DashboardActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private final int IDENTIFIER_SIGNOUT = 101;
     private DatabaseReference mDatabaseRootRef = FirebaseDatabase.getInstance().getReference();
-    private DatabaseReference mCustomerRef = mDatabaseRootRef.child("customer");// Add Name and Phone number to 'Customer' object
+    private DatabaseReference mVehicleTypesRef = mDatabaseRootRef.child(DatabaseConstants.TABLE_VEHICLE+"/"+DatabaseConstants.TABLE_VEHICLE_TYPE);// Add Name and Phone number to 'Customer' object
 
     private String mName;
     private String mMobile;
     private String mCurrentUserId;
+
+    private RecyclerView recyclerView;
+    private VehicleTypeAdapter adapter;
+    private List<Vehicle> mVehicleList;
+    private Vehicle mVehicle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,32 +93,59 @@ public class DashboardActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: mName:"+mName);
 
         //Initialize toolbar
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            boolean isShow = false;
-            int scrollRange = -1;
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
-                }
-                if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbarLayout.setTitle(getResources().getString(R.string.app_name));
-                    isShow = true;
-                } else if(isShow) {
-                    collapsingToolbarLayout.setTitle("");
-                    isShow = false;
-                }
-            }
-        });
+        initCollapsingToolbar();
 
         //Navigation Drawer
         // Create a few sample profile
         // NOTE you have to define the loader logic too. See the CustomApplication for more details
+        initializeDrawer(savedInstanceState);
+
+        //Initialize Grid layout for Vehicles
+        recyclerView = (RecyclerView) findViewById(R.id.vehicle_recycler_view);
+        mVehicleList = new ArrayList<>();
+        adapter = new VehicleTypeAdapter(this, mVehicleList);
+
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+
+        //add vehicle list to adapter
+        fetchAndShowVehicles();
+    }
+
+
+    private int calculateHeight(int size,int viewHeight) {
+        final float scale = this.getResources().getDisplayMetrics().density;
+        int singleViewHeight = (int) (viewHeight * scale + 0.5f);
+        int totalHeight = singleViewHeight * size;
+        return totalHeight;
+    }
+
+    private void fetchAndShowVehicles() {
+        mVehicleTypesRef.orderByKey().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    mVehicle = snapshot.getValue(Vehicle.class);
+                    mVehicleList.add(mVehicle);
+                }
+
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+    }
+
+    private void initializeDrawer(Bundle savedInstanceState) {
         final IProfile profile = new ProfileDrawerItem().withName(mName)
                 .withEmail(CurrentLoggedInUser.getCurrentFirebaseUser().getEmail())
                 .withIcon(GoogleMaterial.Icon.gmd_account)
@@ -217,6 +261,63 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Initializing collapsing toolbar
+     * Will show and hide the toolbar title on scroll
+     */
+    private void initCollapsingToolbar() {
+        final CollapsingToolbarLayout collapsingToolbar =
+                (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        collapsingToolbar.setTitle(" ");
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+        appBarLayout.setExpanded(true);
+
+        // hiding & showing the title when toolbar expanded & collapsed
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = false;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    collapsingToolbar.setTitle(getString(R.string.app_name));
+                    isShow = true;
+                } else if (isShow) {
+                    collapsingToolbar.setTitle(" ");
+                    isShow = false;
+                }
+            }
+        });
+    }
+
+    /*private void initializeToolbar() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = false;
+            int scrollRange = -1;
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    collapsingToolbarLayout.setTitle(getResources().getString(R.string.app_name));
+                    isShow = true;
+                } else if(isShow) {
+                    collapsingToolbarLayout.setTitle("");
+                    isShow = false;
+                }
+            }
+        });
+    }*/
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //add the values which need to be saved from the drawer to the bundle
@@ -234,5 +335,51 @@ public class DashboardActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    /**
+     * RecyclerView item decoration - give equal margin around grid item
+     */
+    public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
+
+        private int spanCount;
+        private int spacing;
+        private boolean includeEdge;
+
+        public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
+            this.spanCount = spanCount;
+            this.spacing = spacing;
+            this.includeEdge = includeEdge;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildAdapterPosition(view); // item position
+            int column = position % spanCount; // item column
+
+            if (includeEdge) {
+                outRect.left = spacing - column * spacing / spanCount; // spacing - column * ((1f / spanCount) * spacing)
+                outRect.right = (column + 1) * spacing / spanCount; // (column + 1) * ((1f / spanCount) * spacing)
+
+                if (position < spanCount) { // top edge
+                    outRect.top = spacing;
+                }
+                outRect.bottom = spacing; // item bottom
+            } else {
+                outRect.left = column * spacing / spanCount; // column * ((1f / spanCount) * spacing)
+                outRect.right = spacing - (column + 1) * spacing / spanCount; // spacing - (column + 1) * ((1f /    spanCount) * spacing)
+                if (position >= spanCount) {
+                    outRect.top = spacing; // item top
+                }
+            }
+        }
+    }
+
+    /**
+     * Converting dp to pixel
+     */
+    private int dpToPx(int dp) {
+        Resources r = getResources();
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
 }

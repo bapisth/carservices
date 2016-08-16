@@ -38,19 +38,65 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE );
         setContentView(R.layout.activity_splash_screen);
+        mAuth = FirebaseAuth.getInstance();
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
         Timer runSplash = new Timer();
         TimerTask showSplashScreen = new TimerTask() {
             @Override
             public void run() {
-                mAuth = FirebaseAuth.getInstance();
-                if (mAuth != null){
+                if (mAuth != null && currentUser != null){
                     mUserSession = new UserSession();
-                    final FirebaseUser currentUser = mAuth.getCurrentUser();
-                    CurrentLoggedInUser.setCurrentFirebaseUser(currentUser);
-                }
-                startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
-                finish();
 
+                    CurrentLoggedInUser.setCurrentFirebaseUser(currentUser);
+
+                    mCustomerRef.orderByKey().equalTo(currentUser.getUid()).addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String previousChildKey) {
+                            Log.d(TAG, "onChildAdded: "+dataSnapshot.getKey());
+                            mCustomer = dataSnapshot.getValue(Customer.class);
+                            mCurrrentKey = dataSnapshot.getKey();
+                            if (mCurrrentKey!= null && currentUser!=null && mCurrrentKey.equalsIgnoreCase(currentUser.getUid()))
+                                if (mCustomer != null){
+
+                                    Log.d(TAG, "onChildAdded: Name="+ mCustomer.getName());
+                                    Log.d(TAG, "onChildAdded: currentKey="+ mCurrrentKey);
+                                    Log.d(TAG, "onChildAdded: previousChildKey="+previousChildKey);
+
+                                    CurrentLoggedInUser.setCurrentFirebaseUser(currentUser);
+                                    CurrentLoggedInUser.setName(mCustomer.getName());
+                                    CurrentLoggedInUser.setMobile(mCustomer.getMobile());
+                                    startActivity(new Intent(SplashScreenActivity.this, DashboardActivity.class));
+                                    finish();
+
+                                }
+                        }
+
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+
+                    });
+
+                }else{
+                    startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
+                    finish();
+                }
             }
 
         };

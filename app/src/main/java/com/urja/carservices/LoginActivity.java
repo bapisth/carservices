@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             //Gets the data as per the user Id "mCustomerRef.orderByChild(mCurrentUserId+"/name")"
             //mCustomerRef.orderByChild("name").addChildEventListener(new ChildEventListener() {
-            mCustomerRef.orderByKey().equalTo(CurrentLoggedInUser.getCurrentFirebaseUser().getUid()).addChildEventListener(new ChildEventListener() {
+            /*mCustomerRef.orderByKey().equalTo(CurrentLoggedInUser.getCurrentFirebaseUser().getUid()).addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String previousChildKey) {
                     Log.d(TAG, "onChildAdded: "+dataSnapshot.getKey());
@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 }
 
-            });
+            });*/
         }
 
         // set the view now
@@ -179,7 +179,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    CurrentLoggedInUser.setCurrentFirebaseUser(auth.getCurrentUser());
+                    Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                     startActivity(intent);
                     finish();
                 }

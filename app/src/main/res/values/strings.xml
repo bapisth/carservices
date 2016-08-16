@@ -9,6 +9,8 @@
     <string name="title_activity_login">Sign in</string>
     <string name="title_progress_dialog">Authenticating</string>
     <string name="message_progress_dialog">Please wait ...</string>
+    <string name="book_service">Book</string>
+    <string name="choose_vehicle_type">Choose Your Vehicle Type</string>
 
     <!--Drawer Labels-->
     <string name="drawer_item_home">Home</string>

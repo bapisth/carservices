@@ -9,8 +9,6 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 
 public class CurrentLoggedInUser {
-    private DatabaseReference mDatabaseRootRef = FirebaseDatabase.getInstance().getReference();
-    private DatabaseReference mCustomerRef = mDatabaseRootRef.child(DatabaseConstants.TABLE_CUSTOMER);
     public static FirebaseUser sCurrentFirebaseUser;
     public static String sName;
     public static String sMobile;
