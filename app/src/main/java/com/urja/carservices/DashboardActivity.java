@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -67,6 +68,7 @@ public class DashboardActivity extends AppCompatActivity {
     private static final int PROFILE_SETTING = 100000;
     private Toolbar mToolbar;
     private final int IDENTIFIER_SIGNOUT = 101;
+    private ProgressBar mProgressBar;
     private DatabaseReference mDatabaseRootRef = FirebaseDatabase.getInstance().getReference();
     private DatabaseReference mVehicleTypesRef = mDatabaseRootRef.child(DatabaseConstants.TABLE_VEHICLE+"/"+DatabaseConstants.TABLE_VEHICLE_TYPE);// Add Name and Phone number to 'Customer' object
 
@@ -101,6 +103,8 @@ public class DashboardActivity extends AppCompatActivity {
         initializeDrawer(savedInstanceState);
 
         //Initialize Grid layout for Vehicles
+        mProgressBar = (ProgressBar) findViewById(R.id.loading_progress);
+        mProgressBar.setVisibility(ProgressBar.VISIBLE);
         recyclerView = (RecyclerView) findViewById(R.id.vehicle_recycler_view);
         mVehicleList = new ArrayList<>();
         adapter = new VehicleTypeAdapter(this, mVehicleList);
@@ -131,7 +135,7 @@ public class DashboardActivity extends AppCompatActivity {
                     mVehicle = snapshot.getValue(Vehicle.class);
                     mVehicleList.add(mVehicle);
                 }
-
+                mProgressBar.setVisibility(ProgressBar.INVISIBLE);
                 adapter.notifyDataSetChanged();
             }
 
@@ -266,8 +270,10 @@ public class DashboardActivity extends AppCompatActivity {
      * Will show and hide the toolbar title on scroll
      */
     private void initCollapsingToolbar() {
-        final CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        final CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         collapsingToolbar.setTitle(" ");
         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         appBarLayout.setExpanded(true);

@@ -19,6 +19,7 @@ android {
     }
 }
 
+apply plugin: 'org.greenrobot.greendao'
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -59,9 +60,17 @@ dependencies {
     compile 'com.mikepenz:fontawesome-typeface:4.6.0.3@aar'
     compile 'com.mikepenz:octicons-typeface:3.0.0.1@aar'
 
+    //Material Viewpager
+    compile ('com.github.florent37:materialviewpager:1.2.0@aar'){
+        transitive = true
+    }
+
+    //GreenDao
+    compile 'org.greenrobot:greendao:3.1.0'
+
     compile project(':giftcardview')
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha4'
-    testCompile 'junit:junit:4.12'
+    //testCompile 'junit:junit:4.12'
 }
 
 apply plugin: 'com.google.gms.google-services'
